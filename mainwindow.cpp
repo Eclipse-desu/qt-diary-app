@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setWindowTitle(tr("Main Window"));
 
+    this->resize(1600, 900);
+
     openAction = new QAction(tr("&Open..."), this);
     openAction->setShortcuts(QKeySequence::Open);
     openAction->setStatusTip(tr("Open an existing file"));
@@ -34,12 +36,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     calendar = new QCalendarWidget(this);
     calendar->setGridVisible(true);
+    calendar->move(QPoint(500, 500));
+    calendar->resize(500, 300);
 
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(textEdit);
-    layout->addWidget(calendar);
-    layout->setSpacing(100);
-    this->setLayout(layout);
+    // QHBoxLayout *layout = new QHBoxLayout;
+    // layout->addWidget(textEdit);
+    // layout->addWidget(calendar);
+    // layout->setSpacing(100);
+    // this->setLayout(layout);
 }
 
 MainWindow::~MainWindow()

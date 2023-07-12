@@ -62,3 +62,6 @@ run.bat
 
 # exe-s
 *.exe
+
+# test files
+test.md
