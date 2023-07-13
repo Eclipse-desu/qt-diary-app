@@ -5,7 +5,14 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QTextCodec>
+
+#include <QGroupBox>
+#include <QGridLayout>
 #include <QHBoxLayout>
+
+#include <QDebug>
+// #include <iostream>
 
 #include "mainwindow.h"
 
@@ -14,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setWindowTitle(tr("Main Window"));
 
-    this->resize(1600, 900);
+    // this->resize(1600, 900);
 
     openAction = new QAction(tr("&Open..."), this);
     openAction->setShortcuts(QKeySequence::Open);
@@ -31,19 +38,38 @@ MainWindow::MainWindow(QWidget *parent) :
     file->addAction(openAction);
     file->addAction(saveAction);
 
-    textEdit = new QTextEdit(this);
-    setCentralWidget(textEdit);
+    QWidget *centralWidget = new QWidget();
 
-    calendar = new QCalendarWidget(this);
+    textEdit = new QTextEdit(centralWidget);
+    // setCentralWidget(textEdit);
+
+    calendar = new QCalendarWidget(centralWidget);
+    calendar->setMinimumDate(QDate(1900, 1, 1));
+    calendar->setMaximumDate(QDate(3000, 1, 1));
     calendar->setGridVisible(true);
-    calendar->move(QPoint(500, 500));
-    calendar->resize(500, 300);
+    // calendar->setMinimumSize(300, 200);
 
-    // QHBoxLayout *layout = new QHBoxLayout;
-    // layout->addWidget(textEdit);
-    // layout->addWidget(calendar);
-    // layout->setSpacing(100);
-    // this->setLayout(layout);
+    QGroupBox *calendarBox = new QGroupBox(centralWidget);
+    QGridLayout *calendarLayout = new QGridLayout;
+    calendarLayout->addWidget(calendar, 0, 0, Qt::AlignCenter);
+    calendarLayout->setSizeConstraint(QLayout::SetFixedSize);
+    calendarBox->setLayout(calendarLayout);
+
+    connect(calendar, &QCalendarWidget::clicked, this, &MainWindow::onCalendarClicked);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(calendarBox, 0, 0);
+    layout->addWidget(textEdit, 0, 1);
+//    layout->setSizeConstraint(QLayout::SetFixedSize);
+    centralWidget->setLayout(layout);
+
+    setCentralWidget(centralWidget);
+
+    // std::cout << calendar->width() << "," << calendar->height() << std::endl;
+    calendar->resize(50, 300);
+    // qDebug() << calendar->width() << "," << calendar->height();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -62,6 +88,7 @@ void MainWindow::openFile()
         }
 
         QTextStream in(&file);
+        in.setCodec(QTextCodec::codecForName("utf-8"));
         textEdit->setText(in.readAll());
         file.close();
     } else {
@@ -89,4 +116,8 @@ void MainWindow::saveFile()
         QMessageBox::warning(this, tr("Path"),
                              tr("You did not select any file."));
     }
+}
+
+void MainWindow::onCalendarClicked(const QDate& date) {
+    textEdit->setText(date.toString());
 }
