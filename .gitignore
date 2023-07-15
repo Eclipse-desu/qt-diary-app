@@ -55,13 +55,19 @@ compile_commands.json
 
 # VS code
 /.vscode
+*.code-workspace
 
 # debug
 build.bat
 run.bat
+br.bat
 
 # exe-s
 *.exe
+/bin
 
 # test files
 test.md
+
+# others
+/images

@@ -1,45 +1,60 @@
 #ifndef DIARYWINDOW_H
 #define DIARYWINDOW_H
 
+#include <QDate>
 #include <QWidget>
 #include <QSettings>
 
 // widgets
 #include <QLabel>
 #include <QLineEdit>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 
 // layouts
 #include <QGroupBox>
 #include <QGridLayout>
+#include <QFormLayout>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+
+class DataPack {
+public:
+    QDate curDate;
+    QString storagePath;
+    bool editable;
+
+    DataPack(const QDate& _date, const QString& _dir, bool _able) : curDate(_date), storagePath(_dir), editable(_able) {}
+};
 
 class DiaryWindow : public QWidget
 {
     Q_OBJECT
 public:
-    DiaryWindow(QWidget *parent = 0);
+    DiaryWindow(const DataPack& _pack, QWidget *parent = 0);
     ~DiaryWindow();
 
 private:
-    void createTextBox();
     void createTitleBox();
-    void createbuttonBox();
 
+    void loadFile();
     void saveFile();
     
-    QLabel dateLabel;
+    QDate curDate;
+    QString storagePath;
+    bool editable;
+
+    QLabel *dateLabel;
     QLineEdit *titleEdit;
-    QTextEdit *textEdit;
+    QPlainTextEdit *textEdit;
     QPushButton *saveButton;
 
-    QGroupBox *textBox, *titleBox, *buttonBox;
+    QGroupBox *titleBox;
 
 signals:
     void askStoragePath();
 
-private slots:
-    void stringMainwindow(const QString&);
+// private slots:
+    // void stringMainwindow(const QString&);
 };
 #endif // DIARYWINDOW_H
