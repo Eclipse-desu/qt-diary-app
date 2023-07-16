@@ -20,14 +20,20 @@ DiaryWindow::DiaryWindow(const DataPack& _pack, QWidget *parent) :
     editable = _pack.editable;
 
     createTitleBox();
+    mainView = new QSplitter;
     textEdit = new QPlainTextEdit;
+    markdownView = new QTextEdit;
+    markdownDoc = new QTextDocument;
+    mainView->addWidget(textEdit);
+    mainView->addWidget(markdownView);
     saveButton = new QPushButton("保存");
 
     connect(saveButton, &QPushButton::clicked, this, &DiaryWindow::saveFile);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    // mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(titleBox);
-    mainLayout->addWidget(textEdit);
+    mainLayout->addWidget(mainView);
     mainLayout->addWidget(saveButton);
     this->setLayout(mainLayout);
 
@@ -41,14 +47,16 @@ DiaryWindow::~DiaryWindow() {
 void DiaryWindow::createTitleBox() {
     // qDebug() << "pass1";
     titleBox = new QGroupBox;
-    titleBox->setFlat(true);
+    // titleBox->setFlat(true);
 
     dateLabel = new QLabel(curDate.toString("yyyy'年'M'月'd'日'"), this);
     titleEdit = new QLineEdit;
 
     QFormLayout* titleLayout = new QFormLayout;
     titleLayout->addRow(dateLabel, titleEdit);
+    // titleLayout->setContentsMargins(0, 0, 0, 0);
     titleBox->setLayout(titleLayout);
+    titleBox->setFixedHeight(titleLayout->sizeHint().height());
     // qDebug() << "pass2";
 }
 
@@ -62,7 +70,10 @@ void DiaryWindow::loadFile() {
     }
     QTextStream in(&file);
     in.setCodec("UTF-8");
-    textEdit->setPlainText(in.readAll());
+    QString doc = in.readAll();
+    textEdit->setPlainText(doc);
+    markdownDoc->setMarkdown(doc);
+    markdownView->setDocument(markdownDoc);
     // qDebug() << editable;
     textEdit->setReadOnly(!editable);
     file.close();

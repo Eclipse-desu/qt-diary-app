@@ -8,7 +8,10 @@
 // widgets
 #include <QLabel>
 #include <QLineEdit>
+#include <QTextEdit>
+#include <QSplitter>
 #include <QPlainTextEdit>
+#include <QTextDocument>
 #include <QPushButton>
 
 // layouts
@@ -46,7 +49,10 @@ private:
 
     QLabel *dateLabel;
     QLineEdit *titleEdit;
+    QSplitter *mainView;
     QPlainTextEdit *textEdit;
+    QTextEdit *markdownView;
+    QTextDocument *markdownDoc;
     QPushButton *saveButton;
 
     QGroupBox *titleBox;
