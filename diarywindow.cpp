@@ -7,6 +7,11 @@
 #include <QTextStream>
 #include <QTextCodec>
 
+#include <QPropertyAnimation>
+#include <QGraphicsDropShadowEffect>
+#include <QPalette>
+#include <QFont>
+
 #include <QDebug>
 
 #include "diarywindow.h"
@@ -38,6 +43,34 @@ DiaryWindow::DiaryWindow(const DataPack& _pack, QWidget *parent) :
     this->setLayout(mainLayout);
 
     loadFile();
+    connect(textEdit, &QPlainTextEdit::textChanged, this, &DiaryWindow::renderMarkdown);
+
+    // chatGPT test
+    // Set background color
+    QPalette pal = textEdit->palette();
+    pal.setColor(QPalette::Base, QColor("#f3f3f3"));  // Use a light gray color
+    pal.setColor(QPalette::Text, QColor("#333333"));  // Use a dark gray color
+    textEdit->setPalette(pal);
+
+    QFont font("Microsoft YaHei, Consolas");
+    textEdit->setFont(font);
+    markdownDoc->setDefaultFont(font);
+    markdownView->setFont(font);
+
+    // Set a border and background color for the textEdit
+    textEdit->setStyleSheet("border: 1px solid #CCCCCC; background-color: #FFFFFF;");  // Use light gray border and white background
+
+    // Apply a slight shadow effect to the textEdit
+    // textEdit->setGraphicsEffect(new QGraphicsDropShadowEffect(this));
+
+    // Use QPropertyAnimation to create a smooth fade-in effect for the titleBox
+    // QPropertyAnimation* animation = new QPropertyAnimation(this, "opacity");
+    // animation->setDuration(5000);
+    // animation->setStartValue(0.0);
+    // animation->setEndValue(1.0);
+    // animation->start(QAbstractAnimation::DeleteWhenStopped);
+    //===
+
     this->resize(800, 900);
 }
 
@@ -50,10 +83,10 @@ void DiaryWindow::createTitleBox() {
     // titleBox->setFlat(true);
 
     dateLabel = new QLabel(curDate.toString("yyyy'年'M'月'd'日'"), this);
-    titleEdit = new QLineEdit;
+    // titleEdit = new QLineEdit;
 
-    QFormLayout* titleLayout = new QFormLayout;
-    titleLayout->addRow(dateLabel, titleEdit);
+    QGridLayout* titleLayout = new QGridLayout;
+    titleLayout->addWidget(dateLabel, 0, 0);
     // titleLayout->setContentsMargins(0, 0, 0, 0);
     titleBox->setLayout(titleLayout);
     titleBox->setFixedHeight(titleLayout->sizeHint().height());
@@ -97,4 +130,10 @@ void DiaryWindow::saveFile() {
     out << textEdit->toPlainText();
     file.close();
     this->close();
+}
+
+void DiaryWindow::renderMarkdown() {
+    QString doc = textEdit->toPlainText();
+    markdownDoc->setMarkdown(doc);
+    markdownView->setDocument(markdownDoc);
 }

@@ -42,6 +42,8 @@ private:
 
     void loadFile();
     void saveFile();
+
+    void renderMarkdown();
     
     QDate curDate;
     QString storagePath;
